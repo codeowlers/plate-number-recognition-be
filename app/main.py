@@ -21,7 +21,7 @@ def read_root():
 
 @app.get("/run")
 async def read_item(url: str, token: str):
-    received_url = 'url+"&token="+token'
+    received_url = url+"&token="+token
     new_url = 'https://i.pinimg.com/originals/f7/2b/ed/f72bed70dc454c8959c5c0b74df13638.jpg'
     await asyncio.sleep(10)
     return {
