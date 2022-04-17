@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
-import time
 
 app = FastAPI()
 origins = ["*"]
@@ -23,10 +22,10 @@ def read_root():
 @app.get("/run")
 async def read_item(url: str, token: str):
     received_url = 'url+"&token="+token'
-    new_url = 'https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2F5735505-52d1-1d20-c6c5' \
-              '-aec1d1dea83-Photo%20-%20Ahmad%20Sidani.jpg?alt=media&token=0ccd9681-c6d7-4cec-9da7-4473e737b085 '
-    await asyncio.sleep(2)
+    new_url = 'https://i.pinimg.com/originals/f7/2b/ed/f72bed70dc454c8959c5c0b74df13638.jpg'
+    await asyncio.sleep(10)
     return {
         "url": new_url,
-        "plateNumber": 1234
+        "plateNumber": 1234,
+        "received_url": received_url
     }
