@@ -19,5 +19,5 @@ def read_root():
 
 
 @app.get("/getUrl/{url}")
-def read_item(url: any):
+def read_item(url):
     return {"url": str(url)}
