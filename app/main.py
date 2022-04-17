@@ -19,5 +19,5 @@ def read_root():
 
 
 @app.get("/run")
-async def read_item(url: str):
-    return {"url": url}
+async def read_item(url: str, token: str):
+    return {"url": url+"&token="+token}
