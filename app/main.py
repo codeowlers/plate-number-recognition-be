@@ -18,6 +18,6 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/getUrl/{url}")
-def read_item(url):
-    return {"url": str(url)}
+@app.get("/")
+async def read_item(url: str):
+    return {"url": url}
