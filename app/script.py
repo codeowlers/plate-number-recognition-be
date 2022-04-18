@@ -33,6 +33,7 @@ storage = firebase.storage()
 
 
 def number_plate_recognition(image_url, epochs=2):
+    image_url= str(image_url)
     # Image Received
     # try:
         pattern = "https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2F(.*?)\?"
