@@ -35,7 +35,7 @@ storage = firebase.storage()
 
 def number_plate_recognition(image_url, epochs=2):
         cmd = 'pwd'
-        print(os.path.abspath('./license_plate.xml'))
+        # print(os.path.abspath('license_plate.xml'))
         image_url= str(image_url)
     # Image Received
     # try:
@@ -51,7 +51,7 @@ def number_plate_recognition(image_url, epochs=2):
         # %%
         # Loads the data required for detecting the license plates from cascade classifier.
 
-        plate_cascade = cv2.CascadeClassifier("/license_plate.xml")
+        plate_cascade = cv2.CascadeClassifier("license_plate.xml")
         if plate_cascade.empty():
             print("empty")
         else:
@@ -339,5 +339,5 @@ def number_plate_recognition(image_url, epochs=2):
     #     print({"error": e, "message": "Server Down"})
     #     return {"error": e, "message": "Server Down"}
 
-image_url='https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2fcar8.jpg?alt=media&token=0af22fe9-358e-44bf-a296-86074d16e734'
-print(number_plate_recognition(image_url,0))
+# image_url='https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2fcar8.jpg?alt=media&token=0af22fe9-358e-44bf-a296-86074d16e734'
+# print(number_plate_recognition(image_url,0))
