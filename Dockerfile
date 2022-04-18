@@ -1,14 +1,12 @@
-#
-FROM python:3.9
-FROM mylamour/tesseract-ocr:opencv
-
-#
+FROM ubuntu:latest
+MAINTAINER Developer Sidani "developer.sidani@gmail.com"
+RUN apt-get update -y
+RUN apt-get install -y python-pip python-dev build-essential
+RUN apt update && apt install -y libsm6 libxext6
+RUN apt-get -y install tesseract-ocr
 WORKDIR /code
-
 #
 COPY ./requirements.txt /code/requirements.txt
-
-RUN pip install --upgrade pip
 #
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
