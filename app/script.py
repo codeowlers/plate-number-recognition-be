@@ -35,7 +35,7 @@ storage = firebase.storage()
 
 def number_plate_recognition(image_url, epochs=2):
         cmd = 'pwd'
-        print(os.path.abspath(os.getcwd()))
+        print(os.path.abspath('./license_plate.xml'))
         image_url= str(image_url)
     # Image Received
     # try:
