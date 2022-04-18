@@ -22,5 +22,5 @@ def read_root():
 @app.get("/run")
 async def read_item(epochs: int, url: str, token: str):
     print('URLLLLLLLLLL......................',url)
-    received_url = str(str(url) + "&token=" + token)
+    received_url = str(str(url.replace("/o/python/", "/o/python%2f")) + "&token=" + token)
     return number_plate_recognition(received_url, epochs)
