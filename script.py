@@ -1,10 +1,7 @@
-# %% md
-## In this tutorial, I will show how to code a license plate recognizer for  license plates using deep learning and some image processing.
-### Find the detailed explanation of the project in this blog: https://towardsdatascience.com/ai-based-license-plate-detector-de9d48ca8951?source=friends_link&sk=a2cbd70e630f6dc3d030e3bae34d98ef
-# %%
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
+# Tensorflow and keras are  free and open-source software libraries for machine learning and artificial intelligence. They can be used across a range of tasks but has a particular focus on training and inference of deep neural networks
 import tensorflow as tf
 from sklearn.metrics import f1_score
 from keras.models import Sequential
@@ -13,12 +10,14 @@ from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
 # Upload an image
 import urllib.request
 import re
+
+# Firebase Package
 import pyrebase
-import os
 
 # check if file exits
 import pathlib
 
+# Configuration for Firebase Storage
 config = {
     "apiKey": "AIzaSyC1VK73kHLRM6Picu6YjGg6pYbTcFt9gEs",
     "authDomain": "learn-plus-fyp.firebaseapp.com",
@@ -33,14 +32,12 @@ firebase = pyrebase.initialize_app(config)
 storage = firebase.storage()
 
 
+
 def number_plate_recognition(image_url, epochs=2):
-        cmd = 'pwd'
-        # print(os.path.abspath('license_plate.xml'))
-        image_url= str(image_url)
-    # Image Received
-    # try:
+    """Reads the image_url and epochs received from Frontend and returns the contour image, plate image, predictions image and plate text"""
+    try:
+        # Separate the image url to get image type and id
         pattern = "https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2f(.*?)\?"
-        print(image_url)
         substring = re.search(pattern, image_url).group(1)
         image_type = substring[-3:]
         image_id = substring[:-4]
@@ -48,9 +45,7 @@ def number_plate_recognition(image_url, epochs=2):
         # Read image url
         urllib.request.urlretrieve(image_url, "temp." + image_type)
 
-        # %%
         # Loads the data required for detecting the license plates from cascade classifier.
-
         plate_cascade = cv2.CascadeClassifier("license_plate.xml")
         if plate_cascade.empty():
             print("empty")
@@ -58,9 +53,8 @@ def number_plate_recognition(image_url, epochs=2):
             print("ok")
         print(plate_cascade)
 
-        # add the path to 'india_license_plate.xml' file.
-        # %%
-        def detect_plate(img, text=''):  # the function detects and perfors blurring on the number plate.
+        def detect_plate(img, text=''):
+            """ the function detects and performs blurring on the number plate. and returns the processed image."""
             plate_img = img.copy()
             roi = img.copy()
             plate_rect = plate_cascade.detectMultiScale(plate_img, scaleFactor=1.2,
@@ -72,13 +66,12 @@ def number_plate_recognition(image_url, epochs=2):
                               3)  # finally representing the detected contours by drawing rectangles around the edges.
             if text != '':
                 plate_img = cv2.putText(plate_img, text, (x - w // 2, y - h // 2),
-                                        cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.5, (51, 181, 155), 1, cv2.LINE_AA)
+                                        cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.5, (51, 181, 155), 1, cv2.LINE_AA) # Add output text above plate
 
             return plate_img, plate  # returning the processed image.
 
-        # %%
-        # Testing the above function
         def display(img_, title=''):
+            """This function takes img as an argument and displays the image"""
             img = cv2.cvtColor(img_, cv2.COLOR_BGR2RGB)
             fig = plt.figure(figsize=(10, 6))
             ax = plt.subplot(111)
@@ -87,25 +80,27 @@ def number_plate_recognition(image_url, epochs=2):
             plt.title(title)
             plt.show()
 
+        # displays the received image and save it locally
         img = cv2.imread('temp.' + image_type)
         display(img, 'input image')
-        # %%
+
         # Getting plate prom the processed image
         output_img, plate = detect_plate(img)
-        # %%
+
+        # display the plate image
         display(output_img, 'detected license plate in the input image')
 
+        #save plate image with contours to segment the plate text locally
         plate_contour = cv2.cvtColor(output_img, cv2.COLOR_BGR2RGB)
         plt.imshow(plate_contour)
         plt.axis('off')
         plt.savefig('plate_contour.jpg')
 
-        # %%
+        # display plate image without contours
         display(plate, 'extracted license plate from the image')
 
-        # %%
-        # Match contours to license plate or character template
         def find_contours(dimensions, img):
+            """ Match contours to license plate or character template """
             # Find all contours in the image
             cntrs, _ = cv2.findContours(img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -115,7 +110,7 @@ def number_plate_recognition(image_url, epochs=2):
             lower_height = dimensions[2]
             upper_height = dimensions[3]
 
-            # Check largest 5 or  15 contours for license plate or character respectively
+            # Check largest 15 contours for license plate or character respectively
             cntrs = sorted(cntrs, key=cv2.contourArea, reverse=True)[:15]
 
             ii = cv2.imread('contour.jpg')
@@ -157,7 +152,7 @@ def number_plate_recognition(image_url, epochs=2):
             plt.savefig('plate_segmented.jpg')
             plt.show()
 
-            # arbitrary function that stores sorted list of character indeces
+            # arbitrary function that stores sorted list of character indices
             indices = sorted(range(len(x_cntr_list)), key=lambda k: x_cntr_list[k])
             img_res_copy = []
             for idx in indices:
@@ -166,7 +161,6 @@ def number_plate_recognition(image_url, epochs=2):
 
             return img_res
 
-        # %%
         # Find characters in the resulting images
         def segment_characters(image):
             # Preprocess cropped license plate image
@@ -199,18 +193,14 @@ def number_plate_recognition(image_url, epochs=2):
 
             return char_list
 
-        # %%
-        # Let's see the segmented characters
+        # Returns the segmented characters
         char = segment_characters(plate)
 
-        # %%
         for i in range(len(char)):
             plt.subplot(1, 10, i + 1)
             plt.imshow(char[i], cmap='gray')
             plt.axis('off')
-        # %% md
         ### Model for characters
-        # %%
         import keras.backend as K
 
         train_datagen = ImageDataGenerator(rescale=1. / 255, width_shift_range=0.1, height_shift_range=0.1)
@@ -226,15 +216,16 @@ def number_plate_recognition(image_url, epochs=2):
             target_size=(28, 28),  # all images will be resized to 28x28 batch_size=1,
             class_mode='sparse')
 
-        # %%
-        # Metrics for checking the model performance while training
+        #
         def f1score(y, y_pred):
+            """Metrics for checking the model performance while training"""
             return f1_score(y, tf.math.argmax(y_pred, axis=1), average='micro')
-
+        #
         def custom_f1score(y, y_pred):
+            """Metrics for returning """
             return tf.py_function(f1score, (y, y_pred), tf.double)
 
-        # %%
+        # Adding Keras neural network layers to the training model
         K.clear_session()
         model = Sequential()
         model.add(Conv2D(16, (22, 22), input_shape=(28, 28, 3), activation='relu', padding='same'))
@@ -249,16 +240,16 @@ def number_plate_recognition(image_url, epochs=2):
 
         model.compile(loss='sparse_categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.0001),
                       metrics=[custom_f1score])
-        # %%
+        # return model summary
         model.summary()
 
-        # %%
+        # class to stop training
         class stop_training_callback(tf.keras.callbacks.Callback):
             def on_epoch_end(self, epoch, logs={}):
                 if (logs.get('val_custom_f1score') > 0.99):
                     self.model.stop_training = True
 
-        # %%
+        # Training the model by passing through the data  and lowering the loss by receiving epochs from the frontend
         batch_size = 1
         callbacks = [stop_training_callback()]
         model.fit(
@@ -267,7 +258,6 @@ def number_plate_recognition(image_url, epochs=2):
             validation_data=validation_generator,
             epochs=epochs, verbose=1, callbacks=callbacks)
 
-        # %%
         # Predicting the output
         def fix_dimension(img):
             new_img = np.zeros((28, 28, 3))
@@ -296,7 +286,7 @@ def number_plate_recognition(image_url, epochs=2):
             return plate_number
 
         results = show_results()
-        # %%
+
         # Segmented characters and their predicted value.
         plt.figure(figsize=(10, 6))
         for i, ch in enumerate(char):
@@ -308,18 +298,15 @@ def number_plate_recognition(image_url, epochs=2):
         plt.savefig('predictions.png')
         plt.show()
 
-        # %%
-        # plate_number = show_results()
-        # output_img, plate = detect_plate(img, plate_number)
-        # display(output_img, 'detected license plate number in the input image')
-        # %%
-
+        #
         def upload_firebase(output):
+            """Function that receives and image, upload the image to firebase and returns the url on firebase"""
             path_on_cloud = "python/" + image_id + '-' + output
             url = storage.child(path_on_cloud).put(output)
             return 'https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2F' + image_id + '-' + output + '?alt=media&token=' + \
                    url['downloadTokens']
 
+        # Checking if file exists to handle errors
         if pathlib.Path('plate_contour.jpg').exists() and pathlib.Path('predictions.png').exists() and pathlib.Path(
                 'plate_segmented.jpg').exists():
             print("File exist")
@@ -329,15 +316,13 @@ def number_plate_recognition(image_url, epochs=2):
         else:
             print("File not exist")
 
+        # returns plate contour image, plated segmented image, and plate number to frontend for display
         return {
             "plate_contour": plate_contour_url,
             "plate_segmented": plate_segmented_url,
             "predictions": predictions_url,
             "plate_number": results
         }
-    # except Exception as e:
-    #     print({"error": e, "message": "Server Down"})
-    #     return {"error": e, "message": "Server Down"}
-
-# image_url='https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2fcar8.jpg?alt=media&token=0af22fe9-358e-44bf-a296-86074d16e734'
-# print(number_plate_recognition(image_url,0))
+    except Exception as e:
+        print({"error": e, "message": "Server Down"})
+        return {"error": e, "message": "Server Down"}
