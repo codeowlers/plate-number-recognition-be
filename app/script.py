@@ -34,7 +34,7 @@ storage = firebase.storage()
 
 def number_plate_recognition(image_url, epochs=2):
     # Image Received
-    try:
+    # try:
         pattern = "https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2F(.*?)\?"
 
         substring = re.search(pattern, image_url).group(1)
@@ -326,6 +326,6 @@ def number_plate_recognition(image_url, epochs=2):
             "predictions": predictions_url,
             "plate_number": results
         }
-    except Exception as e:
-        print({"error": e, "message": "Server Down"})
-        return {"error": e, "message": "Server Down"}
+    # except Exception as e:
+    #     print({"error": e, "message": "Server Down"})
+    #     return {"error": e, "message": "Server Down"}
