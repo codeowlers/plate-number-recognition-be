@@ -1,5 +1,6 @@
 #
 FROM python:3.9
+FROM mylamour/tesseract-ocr:opencv
 
 #
 WORKDIR /code
