@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
+from .script import number_plate_recognition
 
 app = FastAPI()
 origins = ["*"]
@@ -20,12 +20,6 @@ def read_root():
 
 
 @app.get("/run")
-async def read_item(url: str, token: str):
-    received_url = url+"&token="+token
-    new_url = 'https://i.pinimg.com/originals/f7/2b/ed/f72bed70dc454c8959c5c0b74df13638.jpg'
-    await asyncio.sleep(10)
-    return {
-        "url": new_url,
-        "plateNumber": 1234,
-        "received_url": received_url
-    }
+async def read_item(epochs: int, url: str, token: str):
+    received_url = url + "&token=" + token
+    return await number_plate_recognition(received_url, epochs)
