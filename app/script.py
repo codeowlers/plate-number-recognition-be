@@ -14,6 +14,7 @@ from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
 import urllib.request
 import re
 import pyrebase
+import os
 
 # check if file exits
 import pathlib
@@ -33,6 +34,8 @@ storage = firebase.storage()
 
 
 def number_plate_recognition(image_url, epochs=2):
+        cmd = 'pwd'
+        print(os.path.abspath(os.getcwd()))
         image_url= str(image_url)
     # Image Received
     # try:
@@ -47,7 +50,8 @@ def number_plate_recognition(image_url, epochs=2):
 
         # %%
         # Loads the data required for detecting the license plates from cascade classifier.
-        plate_cascade = cv2.CascadeClassifier("license_plate.xml")
+
+        plate_cascade = cv2.CascadeClassifier("plate-number-recognition-be/app/data/license_plate.xml")
         if plate_cascade.empty():
             print("empty")
         else:
