@@ -51,7 +51,7 @@ def number_plate_recognition(image_url, epochs=2):
         # %%
         # Loads the data required for detecting the license plates from cascade classifier.
 
-        plate_cascade = cv2.CascadeClassifier("plate-number-recognition-be/app/data/license_plate.xml")
+        plate_cascade = cv2.CascadeClassifier("/license_plate.xml")
         if plate_cascade.empty():
             print("empty")
         else:
