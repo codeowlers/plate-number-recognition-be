@@ -1,12 +1,12 @@
-FROM ubuntu:latest
-MAINTAINER Developer Sidani "developer.sidani@gmail.com"
-RUN apt-get update -y
-RUN apt-get install -y python3-pip python3-dev build-essential
-RUN apt update && apt install -y libsm6 libxext6
-RUN apt-get -y install tesseract-ocr
+#
+FROM python:3.9
+
+#
 WORKDIR /code
+
 #
 COPY ./requirements.txt /code/requirements.txt
+
 #
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
