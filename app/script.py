@@ -36,7 +36,7 @@ def number_plate_recognition(image_url, epochs=2):
         image_url= str(image_url)
     # Image Received
     # try:
-        pattern = "https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2F(.*?)\?"
+        pattern = "https://firebasestorage.googleapis.com/v0/b/learn-plus-fyp.appspot.com/o/python%2f(.*?)\?"
         print(image_url)
         substring = re.search(pattern, image_url).group(1)
         image_type = substring[-3:]
